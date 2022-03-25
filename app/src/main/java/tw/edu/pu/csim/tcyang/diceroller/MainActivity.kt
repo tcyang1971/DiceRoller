@@ -3,14 +3,16 @@ package tw.edu.pu.csim.tcyang.diceroller
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),
-    View.OnTouchListener{
+    View.OnTouchListener, GestureDetector.OnGestureListener{
 
     lateinit var mper: MediaPlayer
+    lateinit var gDetector: GestureDetector
 
     fun rndDice(){
         var counter = (1..6).random()
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         img.setOnTouchListener(this)
+        gDetector = GestureDetector(this, this)
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -44,6 +47,36 @@ class MainActivity : AppCompatActivity(),
             rndDice()
             mper.stop()
         }
+        gDetector.onTouchEvent(event)
+        return true
+    }
+
+    override fun onDown(p0: MotionEvent?): Boolean {
+        txv.text = "按下"
+        return true
+    }
+
+    override fun onShowPress(p0: MotionEvent?) {
+        txv.text = "持續"
+    }
+
+    override fun onSingleTapUp(p0: MotionEvent?): Boolean {
+        txv.text = "短按"
+        return true
+    }
+
+    override fun onScroll(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float): Boolean {
+        //txv.text = "拖曳"
+        rndDice()
+        return true
+    }
+
+    override fun onLongPress(p0: MotionEvent?) {
+        txv.text = "長按"
+    }
+
+    override fun onFling(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float): Boolean {
+        //txv.text = "快滑"
         return true
     }
 }
