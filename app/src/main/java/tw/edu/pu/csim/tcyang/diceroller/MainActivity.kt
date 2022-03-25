@@ -1,5 +1,9 @@
 package tw.edu.pu.csim.tcyang.diceroller
 
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,10 +13,12 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),
-    View.OnTouchListener, GestureDetector.OnGestureListener{
+    View.OnTouchListener, GestureDetector.OnGestureListener, SensorEventListener{
 
     lateinit var mper: MediaPlayer
     lateinit var gDetector: GestureDetector
+    var sensorManager: SensorManager? = null
+    var sensor: Sensor? = null
 
     fun rndDice(){
         var counter = (1..6).random()
@@ -33,6 +39,11 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         img.setOnTouchListener(this)
         gDetector = GestureDetector(this, this)
+        // get reference of the service
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        // focus in accelerometer
+        sensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorManager?.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -78,5 +89,23 @@ class MainActivity : AppCompatActivity(),
     override fun onFling(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float): Boolean {
         //txv.text = "快滑"
         return true
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if(event != null){
+            val xValue = Math.abs(event.values[0]) // 加速度 - X 軸方向
+            val yValue = Math.abs(event.values[1]) // 加速度 - Y 軸方向
+            val zValue = Math.abs(event.values[2]) // 加速度 - Z 軸方向
+            if (xValue > 20 || yValue > 20 || zValue > 20) {
+                rndDice()
+                mper = MediaPlayer.create(this, R.raw.dice)
+                mper.start()
+                mper.isLooping = false
+            }
+        }
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+
     }
 }
