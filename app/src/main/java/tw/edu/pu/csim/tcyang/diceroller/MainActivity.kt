@@ -1,5 +1,6 @@
 package tw.edu.pu.csim.tcyang.diceroller
 
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
@@ -8,6 +9,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),
     View.OnTouchListener{
+
+    lateinit var mper: MediaPlayer
 
     fun rndDice(){
         var counter = (1..6).random()
@@ -33,9 +36,13 @@ class MainActivity : AppCompatActivity(),
         if (event?.action == MotionEvent.ACTION_DOWN){
             img.setImageResource(R.drawable.dice)
             txv.text = "歡迎來到擲骰子遊戲世界"
+            mper = MediaPlayer.create(this, R.raw.dice)
+            mper.start()
+            mper.isLooping = true
         }
         else if  (event?.action == MotionEvent.ACTION_UP){
             rndDice()
+            mper.stop()
         }
         return true
     }
