@@ -2,11 +2,12 @@ package tw.edu.pu.csim.tcyang.diceroller
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),
-    View.OnClickListener, View.OnLongClickListener{
+    View.OnTouchListener{
 
     fun rndDice(){
         var counter = (1..6).random()
@@ -25,17 +26,17 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        img.setOnClickListener(this)
-        img.setOnLongClickListener(this)
+        img.setOnTouchListener(this)
     }
 
-    override fun onClick(p0: View?) {
-        rndDice()
-    }
-
-    override fun onLongClick(p0: View?): Boolean {
-        img.setImageResource(R.drawable.dice)
-        txv.text = "歡迎來到擲骰子遊戲世界"
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN){
+            img.setImageResource(R.drawable.dice)
+            txv.text = "歡迎來到擲骰子遊戲世界"
+        }
+        else if  (event?.action == MotionEvent.ACTION_UP){
+            rndDice()
+        }
         return true
     }
 }
